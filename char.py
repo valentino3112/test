@@ -41,8 +41,11 @@ class Char:
             #temps_diff = 2
             # print("Click Up ", self.last_event[0].pos, temps_diff)
             self.temps_debut = 0
-            if temps_diff >= 2:
+            print(temps_diff)
+            if temps_diff > 2:
                 power = 4
+            elif temps_diff <= 2 and temps_diff >= 1.5:
+                power = 3.5
             elif temps_diff <= 1.5 and temps_diff >= 1:
                 power = 3
             elif temps_diff <= 1 and temps_diff >= 0.5:
@@ -62,8 +65,13 @@ class Char:
             g = 9.81
             #v0 = 200 + 200 * temps_diff
             v0 = 200 + 200 * power
-            vx = v0 * math.cos(angle)
-            vy = v0 * math.sin(angle)
+
+            if math.sin(angle) <= 0:
+                vx = v0 * math.cos(angle)
+                vy = v0 * math.sin(angle)
+            else:
+                vy = v0 * -math.sin(angle)
+                vx = v0 * -math.cos(angle)
             dt = 0.05
             # #self.rect.x += dt * vx
             # self.pos[0] += dt * vx
