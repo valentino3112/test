@@ -27,6 +27,8 @@ class Char:
         self.jump = False
         self.mouse_x, self.mouse_y = 0,0
         self.click = False
+        self.isGround = False
+        self.temps_debut = 0
         # self.collision_rect = self.image.get_rect(left=self.pos[0], top=self.pos[1])
 
     def render(self):
@@ -34,12 +36,22 @@ class Char:
         #pygame.draw.rect(self.screen, (255,0,0),self.rect,1)
 
     def move(self):
-            #temps_diff = time.time() - self.temps_debut
-            temps_diff = 2
+            temps_diff = time.time() - self.temps_debut
+            #print(temps_diff)
+            #temps_diff = 2
             # print("Click Up ", self.last_event[0].pos, temps_diff)
-            self.temps_debut = None
+            self.temps_debut = 0
+            if temps_diff <= 2:
+                power = 4
+            if temps_diff <= 1.5:
+                power = 3
+            if temps_diff <= 1:
+                power = 2
+            if temps_diff <= 0.5:
+                power = 1
 
-            nombre_secondes_max = 2
+            nombre_secondes_max = 10
+            print(power)
             if temps_diff > nombre_secondes_max:
                 temps_diff = nombre_secondes_max
 
@@ -48,7 +60,8 @@ class Char:
             force_frottement = 10
             masse_personnage = 50
             g = 9.81
-            v0 = 200 + 200 * temps_diff
+            #v0 = 200 + 200 * temps_diff
+            v0 = 200 + 200 * power
             vx = v0 * math.cos(angle)
             vy = v0 * math.sin(angle)
             dt = 0.05
@@ -60,6 +73,10 @@ class Char:
             # vy += dt * vy * (-force_frottement / masse_personnage) + dt * g * masse_personnage
             self.speed[0] = dt * vx
             self.speed[1] = dt * vy
+            if vx < 0:
+                self.isleft = True
+            else:
+                self.isleft = False
 
 
     def check_event(self):
@@ -109,22 +126,32 @@ class Char:
         self.collideUp = False
 
 
-        if self.click and (self.iscrouching == False):
+
+
+
+
+
+
+        if self.click and (self.iscrouching == False) and self.isGround:
             print('a')
+            self.temps_debut = time.time()
             self.iscrouching = True
             self.image = pygame.image.load(os.path.join('data', 'img', 'lapin2.png'))
             if not self.isleft:
                 self.image = pygame.transform.flip(self.image, True, False)
 
 
-        if (not self.click) and self.iscrouching:
+
+
+
+        if (not self.click) and self.iscrouching and self.isGround:
             print('b')
             self.iscrouching = False
             self.image = pygame.image.load(os.path.join('data', 'img', 'lapin.png'))
             if not self.isleft:
                 self.image = pygame.transform.flip(self.image, True, False)
-            print("FUCK")
             self.move()
+            self.isGround = False
 
 
 
@@ -156,6 +183,7 @@ class Char:
                 if frame_movement[1] > 0:
                     ent_rect.bottom = platform.rect.top
                     self.collideDown = True
+                    self.isGround = True
                 if frame_movement[1] < 0:
                     ent_rect.top = platform.rect.bottom
                     self.collideUp = True
@@ -168,3 +196,4 @@ class Char:
             self.speed[0] = 0
 
         self.check_levels()
+
