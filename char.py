@@ -41,13 +41,13 @@ class Char:
             #temps_diff = 2
             # print("Click Up ", self.last_event[0].pos, temps_diff)
             self.temps_debut = 0
-            if temps_diff <= 2:
+            if temps_diff >= 2:
                 power = 4
-            if temps_diff <= 1.5:
+            elif temps_diff <= 1.5 and temps_diff >= 1:
                 power = 3
-            if temps_diff <= 1:
+            elif temps_diff <= 1 and temps_diff >= 0.5:
                 power = 2
-            if temps_diff <= 0.5:
+            elif temps_diff <= 0.5 and temps_diff >= 0:
                 power = 1
 
             nombre_secondes_max = 10
